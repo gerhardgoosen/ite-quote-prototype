@@ -256,7 +256,7 @@ function updateUserPassword(req, res) {
 
                 res.send({
                     "code": 200,
-                    "message": "register ok"
+                    "message": "password set"
                 });
             }
         });
@@ -431,7 +431,7 @@ function listSingleQuote(req, res) {
 
 
 function saveQuote(req, res) {
-
+    var today = new Date();
     var quote = {
         "quote": req.body.quote,
         "author": req.body.author,
@@ -464,8 +464,6 @@ function saveQuote(req, res) {
 
 
 function updateQuote(req, res) {
-
-    console.log("req",req);
 
     var quoteId = req.params.quoteId;
 
