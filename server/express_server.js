@@ -116,10 +116,21 @@ function setupExpressApp() {
     app.use(bodyParser.urlencoded({extended: true}));
     app.use(bodyParser.json());
 
+    app.use(express.static(path.join(__dirname, 'public')));
+
+
     app.use(function (req, res, next) {
         res.header("Access-Control-Allow-Origin", "*");
         res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
         next();
+    });
+
+
+    /* GET home page. */
+    app.get('/', function (req, res, next) {
+
+        //Path to my angular app
+        res.status(200).sendFile(path.join(__dirname + '../public/index.html'));
     });
 
     app.use('/api', router);
@@ -405,7 +416,7 @@ function listSingleQuote(req, res) {
 
     var quoteId = req.params.quoteId;
 
-    connection.query('SELECT * FROM quotes where id=? ', quoteId , function (error, results, fields) {
+    connection.query('SELECT * FROM quotes where id=? ', quoteId, function (error, results, fields) {
         if (error) {
             //console.log("error ocurred",error);
             res.send({
