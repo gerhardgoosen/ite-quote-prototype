@@ -1,0 +1,5 @@
+[{ "id": "express.port", "value": "5000" },
+  { "id": "mysql.host", "value": "localhost" },
+  { "id": "mysql.user", "value": "ite_user" },
+  { "id": "mysql.password",  "value": "easy0n3" },
+  { "id": "mysql.database",  "value": "quoteApp" }]

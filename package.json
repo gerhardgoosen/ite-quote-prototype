@@ -1,0 +1,16 @@
+{
+  "name": "iteQuoteApp",
+  "version": "1.0.0",
+  "description": "NodeJS, ExpressJS, Bootstrap, MySQL",
+  "author": "Gerhard Goosen",
+  "license": "MIT",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+	 "start": "node express_server.js"
+  }, 
+  "dependencies": {
+    "body-parser": "^1.16.0",
+    "express": "^4.14.0",
+    "mysql": "^2.13.0"
+  }
+}
