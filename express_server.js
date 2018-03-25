@@ -17,6 +17,7 @@ console.log("Starting express server\n\n");
 
 var connection = mysql.createConnection({
     host: appProperties['mysql.host'],
+    port:  appProperties['mysql.port'],
     user: appProperties['mysql.user'],
     password: appProperties['mysql.password'],
     database: appProperties['mysql.database']
@@ -129,14 +130,14 @@ function landingPage(req, res) {
 }
 
 function register(req, res) {
-    console.log("req", JSON.stringify(req.body));
+   // console.log("req", JSON.stringify(req.body));
 
     var today = new Date();
 
     var user = {
         "first_name": req.body.first_name,
         "last_name": req.body.last_name,
-        "email": req.body.email,
+        "username": req.body.username,
         "password": req.body.password,
         "created": today,
         "modified": today
@@ -162,7 +163,7 @@ function register(req, res) {
                     "message": "database error ocurred"
                 })
             } else {
-                console.log('results: ', results);
+               // console.log('results: ', results);
 
                 res.send({
                     "code": 200,
@@ -179,12 +180,12 @@ function register(req, res) {
 
 function login(req, res) {
 
-    console.log("req", JSON.stringify(req.body));
+ //   console.log("req", JSON.stringify(req.body));
 
-    var email = req.body.email;
+    var username = req.body.username;
     var password = req.body.password;
 
-    connection.query('SELECT * FROM users WHERE email = ?', [email], function (error, results, fields) {
+    connection.query('SELECT * FROM users WHERE username = ?', [username], function (error, results, fields) {
         if (error) {
             //console.log("error ocurred",error);
             res.send({
@@ -192,7 +193,8 @@ function login(req, res) {
                 "message": "database error ocurred"
             })
         } else {
-            console.log('results: ', results);
+           // console.log('results: ', results);
+
             if (results.length > 0) {
 
                 bcrypt.compare(password, results[0].password).then(function (matched) {
@@ -207,7 +209,7 @@ function login(req, res) {
                     else {
                         res.send({
                             "code": 204,
-                            "message": "Email and password does not match"
+                            "message": "username and password does not match"
                         });
                     }
 
@@ -217,7 +219,7 @@ function login(req, res) {
             else {
                 res.send({
                     "code": 204,
-                    "message": "Email does not exits"
+                    "message": "username does not exits"
                 });
             }
         }
