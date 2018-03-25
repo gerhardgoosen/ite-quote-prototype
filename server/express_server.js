@@ -116,7 +116,7 @@ function setupExpressApp() {
     app.use(bodyParser.urlencoded({extended: true}));
     app.use(bodyParser.json());
 
-    app.use(express.static(path.join(__dirname, 'public')));
+    app.use(express.static(path.join(__dirname, 'app')));
 
 
     app.use(function (req, res, next) {
@@ -130,7 +130,7 @@ function setupExpressApp() {
     app.get('/', function (req, res, next) {
 
         //Path to my angular app
-        res.status(200).sendFile(path.join(__dirname + '../public/index.html'));
+        res.status(200).sendFile(path.join(__dirname + '../app/index.html'));
     });
 
     app.use('/api', router);
