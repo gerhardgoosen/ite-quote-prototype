@@ -6,12 +6,29 @@
   "license": "MIT",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-	 "start": "node ./server/express_server.js"
-  }, 
+    "postinstall": "bower install",
+    "postupdate-deps": "bower update",
+    "prestart": "npm install",
+    "start": "node ./server/express_server.js",
+    "pretest": "npm install",
+    "test": "karma start karma.conf.js ",
+    "test-single-run": "karma start karma.conf.js --single-run",
+
+
+    "update-index-async": "node -e \"var fs=require('fs'),indexFile='app/index-async.html',loaderFile='app/bower_components/angular-loader/angular-loader.min.js',loaderText=fs.readFileSync(loaderFile,'utf-8').split(/sourceMappingURL=angular-loader.min.js.map/).join('sourceMappingURL=bower_components/angular-loader/angular-loader.min.js.map'),indexText=fs.readFileSync(indexFile,'utf-8').split(/\\/\\/@@NG_LOADER_START@@[\\s\\S]*\\/\\/@@NG_LOADER_END@@/).join('//@@NG_LOADER_START@@\\n'+loaderText+'    //@@NG_LOADER_END@@');fs.writeFileSync(indexFile,indexText);\""
+  },
   "dependencies": {
     "body-parser": "^1.16.0",
     "express": "^4.14.0",
     "mysql": "^2.13.0",
-    "bcrypt":"^1.0.3"
+    "bcrypt": "^1.0.3",
+    "bower": "^1.7.7",
+    "jasmine-core": "^2.4.1",
+    "karma": "^0.13.22",
+    "karma-chrome-launcher": "^0.2.3",
+    "karma-firefox-launcher": "^0.1.7",
+    "karma-jasmine": "^0.3.8",
+    "karma-junit-reporter": "^0.4.1",
+    "protractor": "^4.0.9"
   }
 }
