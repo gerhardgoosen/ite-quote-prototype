@@ -52,7 +52,10 @@ CREATE TABLE users  (
     PRIMARY KEY(id)
 )
 /
-
+ALTER TABLE users
+    ADD CONSTRAINT UK
+	UNIQUE (username)
+/
 
 
 drop TABLE roles
@@ -98,8 +101,9 @@ CREATE TABLE quotes  (
     quote       varchar(255) NOT NULL,
     author      varchar(255) NOT NULL DEFAULT 'anonymous',
     source      varchar(255)    ,
-    year        datetime
-,
+    year        varchar(4),
+    created     datetime    NOT NULL,
+    modified    datetime    NOT NULL,
     PRIMARY KEY(id)
     )
 /
