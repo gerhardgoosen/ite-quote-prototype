@@ -1,7 +1,10 @@
+var bcrypt = require('bcrypt');
 var mysql = require('mysql');
 var express = require("express");
 var path = require('path');
 var bodyParser = require('body-parser');
+
+var appProperties = require("./app_properties.json");
 var app = express();
 var router = express.Router();
 
@@ -10,14 +13,13 @@ console.log("Starting express server\n\n");
 
 /**
  * mysql connection
- * TODO get from prop file
  */
 
 var connection = mysql.createConnection({
-    host: 'localhost',
-    user: 'ite_user',
-    password: 'easy0n3',
-    database: 'quoteApp'
+    host: appProperties['mysql.host'],
+    user: appProperties['mysql.user'],
+    password: appProperties['mysql.password'],
+    database: appProperties['mysql.database']
 });
 
 
@@ -82,11 +84,8 @@ function setupExpressApp() {
 
     app.use('/api', router);
 
-    //TODO get from prop file
-    var port = process.env.PORT || 5000;
-
-    app.listen(port, function () {
-        console.log("Listening on " + port);
+    app.listen(appProperties['express.port'], function () {
+        console.log("Listening on " + appProperties['express.port']);
         console.log("App path /api");
     });
 
@@ -134,7 +133,7 @@ function register(req, res) {
 
     var today = new Date();
 
-    var users = {
+    var user = {
         "first_name": req.body.first_name,
         "last_name": req.body.last_name,
         "email": req.body.email,
@@ -143,23 +142,38 @@ function register(req, res) {
         "modified": today
     };
 
-    connection.query('INSERT INTO users SET ?', users, function (error, results, fields) {
-        console.log(fields);
-        if (error) {
-            console.log("database error ocurred", error);
-            res.send({
-                "code": 400,
-                "message": "database error ocurred"
-            })
-        } else {
-            console.log('results: ', results);
 
-            res.send({
-                "code": 200,
-                "message": "register ok"
-            });
-        }
+    //lets encrypt the password, when its done creating the hashed value we can save it to the db
+    bcrypt.hash(user.password, 10).then(function (hash) {
+        console.log("user.password : ", user.password);
+        console.log("hash : ", hash);
+
+        //override user password with hashed value
+        user.password = hash;
+
+
+        //save to db
+        connection.query('INSERT INTO users SET ?', user, function (error, results, fields) {
+            console.log(fields);
+            if (error) {
+                console.log("database error ocurred", error);
+                res.send({
+                    "code": 400,
+                    "message": "database error ocurred"
+                })
+            } else {
+                console.log('results: ', results);
+
+                res.send({
+                    "code": 200,
+                    "message": "register ok"
+                });
+            }
+        });
+
     });
+
+
 }
 
 
@@ -181,18 +195,24 @@ function login(req, res) {
             console.log('results: ', results);
             if (results.length > 0) {
 
-                if (results[0].password == password) {
-                    res.send({
-                        "code": 200,
-                        "message": "login ok"
-                    });
-                }
-                else {
-                    res.send({
-                        "code": 204,
-                        "message": "Email and password does not match"
-                    });
-                }
+                bcrypt.compare(password, results[0].password).then(function (matched) {
+                    // matched == true
+
+                    if (matched) {
+                        res.send({
+                            "code": 200,
+                            "message": "login ok"
+                        });
+                    }
+                    else {
+                        res.send({
+                            "code": 204,
+                            "message": "Email and password does not match"
+                        });
+                    }
+
+                });
+
             }
             else {
                 res.send({
