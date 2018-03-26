@@ -1,0 +1,23 @@
+{
+  "name": "quote-app",
+  "description": "ITE AngularJS Quote App",
+  "version": "0.0.1",
+  "homepage": "https://github.com/gerhardgoosen/iteQuoteApp",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "angular": "~1.5.0",
+    "angular-route": "~1.5.0",
+    "angular-ui-router": "*",
+    "angular-loader": "~1.5.0",
+    "angular-mocks": "~1.5.0",
+    "html5-boilerplate": "^5.3.0",
+    "angular-md5": "^0.1.10",
+    "angular-moment": "^1.0.1",
+    "angular-material": "*",
+    "angular-aria": "*",
+    "angular-animate": "*",
+    "bootstrap": "*",
+    "jquery": "*"
+  }
+}
