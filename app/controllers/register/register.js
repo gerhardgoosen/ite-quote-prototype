@@ -1,3 +1,4 @@
+/*
 'use strict';
 
 angular.module('quoteApp.register', ['ngRoute'])
@@ -11,4 +12,9 @@ angular.module('quoteApp.register', ['ngRoute'])
 
 .controller('RegisterCtrl', [function() {
 
+}]);*/
+
+
+app.controller('RegisterCtrl', ['$scope', '$state', '$http', '$window', function ($scope, $state, $http, $window) {
+    $scope.title = "Register";
 }]);

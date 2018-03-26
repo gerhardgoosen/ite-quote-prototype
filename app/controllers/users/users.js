@@ -1,3 +1,4 @@
+/*
 'use strict';
 
 angular.module('quoteApp.users', ['ngRoute'])
@@ -11,4 +12,10 @@ angular.module('quoteApp.users', ['ngRoute'])
 
 .controller('UsersCtrl', [function() {
 
+}]);*/
+
+
+
+app.controller('UsersCtrl', ['$scope', '$state', '$http', '$window', function ($scope, $state, $http, $window) {
+    $scope.title = "Users";
 }]);

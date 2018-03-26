@@ -7,51 +7,100 @@
 <html lang="en" ng-app="quoteApp" class="no-js lt-ie9"> <![endif]-->
 <!--[if gt IE 8]><!-->
 <html lang="en" ng-app="quoteApp" class="no-js"> <!--<![endif]-->
-<head>
+<head ng-controller="QuotesAppCtrl as mainController">
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Quote App</title>
+    <title>{{appTitle}}</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="bower_components/html5-boilerplate/dist/css/normalize.css">
     <link rel="stylesheet" href="bower_components/html5-boilerplate/dist/css/main.css">
     <link rel="stylesheet" href="app.css">
     <script src="bower_components/html5-boilerplate/dist/js/vendor/modernizr-2.8.3.min.js"></script>
+
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.css">
+
+
 </head>
 
 
-<body>
+<body layout="row" ng-controller="QuotesAppCtrl as mainController" ng-cloak>
 
-<ul class="menu">
-    <li><a href="#!/login">login</a></li>
-    <li><a href="#!/register">register</a></li>
-    <li><a href="#!/quotes">quotes</a></li>
-    <li><a href="#!/users">users</a></li>
-    <li><a href="#!/info">info</a></li>
+<div class="container">
+    <!--[if lt IE 7]>
+    <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade
+        your browser</a> to improve your experience.</p>
+    <![endif]-->
 
-</ul>
+    <div class="row">
 
-<!--[if lt IE 7]>
-<p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade
-    your browser</a> to improve your experience.</p>
-<![endif]-->
+        <div class="col-md-12">
+            <div class="page-header">
+                <h1>{{ title }}</h1>
+            </div>
+        </div>
+    </div>
 
-<div ng-view></div>
+    <div class="row">
+        <div class="col-md-12">
 
 
-<div><span app-name></span>: v<span app-version></span></div>
+            <div class="row" ng-show="isAuthenticated()">
+                <ul class="menu">
 
-<!-- In production use:
-<script src="//ajax.googleapis.com/ajax/libs/angularjs/x.x.x/angular.min.js"></script>
--->
+                    <!--<li><a href="#!/login">login</a></li>-->
+                    <!--<li><a href="#!/register">register</a></li>-->
+                    <li><a href="#!/quotes">quotes</a></li>
+                    <li><a href="#!/users">users</a></li>
+                    <li><a href="#!/info">info</a></li>
+                    <li><a ng-hide="isAuthenticated()" href="#/login">Login</a></li>
+                    <li><a ng-click="logout()">Logout</a></li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <!--<div ng-view></div>-->
+            <div ui-view></div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div><span app-name></span> app: v<span app-version></span></div>
+        </div>
+    </div>
+</div>
+
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.js"></script>-->
+<script src="bower_components/jquery/dist/jquery.js"></script>
 <script src="bower_components/angular/angular.js"></script>
 <script src="bower_components/angular-route/angular-route.js"></script>
+
+<script src="bower_components/angular-ui-router/release/angular-ui-router.min.js"></script>
+<script src="bower_components/angular-md5/angular-md5.js"></script>
+
+<script src="bower_components/moment/moment.js"></script>
+<script src="bower_components/angular-moment/angular-moment.js"></script>
+
+<script src="bower_components/angular-animate/angular-animate.js"></script>
+<script src="bower_components/angular-aria/angular-aria.js"></script>
+<script src="bower_components/angular-messages/angular-messages.js"></script>
+<script src="bower_components/angular-material/angular-material.js"></script>
+
 <script src="app.js"></script>
-<script src="login/login.js"></script>
-<script src="register/register.js"></script>
-<script src="quotes/quotes.js"></script>
-<script src="users/users.js"></script>
-<script src="info/info.js"></script>
+<script src="controllers/login/login.js"></script>
+<script src="controllers/password/password.js"></script>
+<script src="controllers/register/register.js"></script>
+<script src="controllers/quotes/quotes.js"></script>
+<script src="controllers/users/users.js"></script>
+<script src="controllers/info/info.js"></script>
+
+
 <script src="components/version/version.js"></script>
 <script src="components/version/version-directive.js"></script>
 <script src="components/version/interpolate-filter.js"></script>

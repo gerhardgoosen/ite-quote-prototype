@@ -4,7 +4,7 @@ var express = require("express");
 var path = require('path');
 var bodyParser = require('body-parser');
 
-var appProperties = require("./app_properties.json");
+var serverProperties = require("./server_properties.json");
 var app = express();
 var router = express.Router();
 
@@ -16,11 +16,11 @@ console.log("Starting express server\n\n");
  */
 
 var connection = mysql.createConnection({
-    host: appProperties['mysql.host'],
-    port: appProperties['mysql.port'],
-    user: appProperties['mysql.user'],
-    password: appProperties['mysql.password'],
-    database: appProperties['mysql.database']
+    host: serverProperties['mysql.host'],
+    port: serverProperties['mysql.port'],
+    user: serverProperties['mysql.user'],
+    password: serverProperties['mysql.password'],
+    database: serverProperties['mysql.database']
 });
 
 
@@ -135,8 +135,8 @@ function setupExpressApp() {
 
     app.use('/api', router);
 
-    app.listen(appProperties['express.port'], function () {
-        console.log("Listening on " + appProperties['express.port']);
+    app.listen(serverProperties['express.port'], function () {
+        console.log("Listening on " + serverProperties['express.port']);
         console.log("App path /api");
     });
 
@@ -233,7 +233,7 @@ function landingPage(req, res) {
 
 
 function updateUserPassword(req, res) {
-    // console.log("req", JSON.stringify(req.body));
+     console.log("updateUserPassword");
 
     var today = new Date();
 
@@ -247,6 +247,7 @@ function updateUserPassword(req, res) {
     //lets encrypt the password, when its done creating the hashed value we can save it to the db
     bcrypt.hash(user.password, 10).then(function (hash) {
         console.log("user.password : ", user.password);
+        console.log("user.username : ", user.username);
         console.log("hash : ", hash);
 
         //override user password with hashed value
@@ -254,8 +255,9 @@ function updateUserPassword(req, res) {
 
 
         //save to db
-        connection.query('UPDATE users SET password = ?,modified=? where username = ?', [user.password, user.modified, user.username], function (error, results, fields) {
-            console.log(fields);
+        console.log('UPDATE users SET password = "'+hash+'"  where username = "'+user.username+'"');
+        connection.query('UPDATE users SET password = "'+hash+'"  where username = "'+user.username+'"',  function (error, results, fields) {
+
             if (error) {
                 console.log("database error ocurred", error);
                 res.send({
@@ -263,7 +265,7 @@ function updateUserPassword(req, res) {
                     "message": "database error ocurred"
                 })
             } else {
-                // console.log('results: ', results);
+                 console.log('results: ', results);
 
                 res.send({
                     "code": 200,
@@ -357,7 +359,7 @@ function login(req, res) {
                         }
                         else {
                             res.send({
-                                "code": 204,
+                                "code": 500,
                                 "message": "username and password does not match"
                             });
                         }
@@ -366,7 +368,7 @@ function login(req, res) {
 
                 } else {
                     res.send({
-                        "code": 204,
+                        "code": 500,
                         "message": "user needs to provide password",
                         "fix": "provide_password"
                     });
