@@ -1,14 +1,14 @@
-//
+'use strict';
 
-/*angular.module('quoteApp.info', ['ngRoute'])
+angular.module('quoteApp').controller('InfoCtrl', ['$scope', '$state', 'LoginService', function ($scope, $state, LoginService) {
+    $scope.title = "Information";
 
- .config(['$routeProvider', function($routeProvider) {
- $routeProvider.when('/info', {
- templateUrl: 'info/info.html',
- controller: 'InfoCtrl'
- });
- }])*/
+    $scope.init = function () {
+        if (!LoginService.isAuthenticated()) {
+            $state.transitionTo('login');
+        }
+    }
 
-app.controller('InfoCtrl', ['$scope', '$state', '$http', '$window', function ($scope, $state, $http, $window) {
-    $scope.title = "Info";
+    $scope.init();
+
 }]);

@@ -1,3 +1,4 @@
+
 var bcrypt = require('bcrypt');
 var mysql = require('mysql');
 var express = require("express");
@@ -25,9 +26,8 @@ var connection = mysql.createConnection({
 
 
 /**
- *
  # Routes #
-
+ ---------------- GEN ----------------------
  **/
 
 // landing page route
@@ -56,6 +56,10 @@ router.post('/setPassword', function (req, res) {
     console.log("setPassword :)");
     updateUserPassword(req, res);
 });
+
+
+
+//---------------- QUOTES ----------------------
 
 
 //route for all quotes
@@ -89,11 +93,45 @@ router.delete('/quote/:quoteId', function (req, res) {
 });
 
 
-//--------------------------------------
+//------------------ USERS --------------------
+
+
+//route for all user
+router.get('/users', function (req, res) {
+    console.log("list users :)");
+    listUsers(req, res);
+});
+
+//route for single user
+router.get('/user/:userId', function (req, res) {
+    console.log("list user :)");
+    listSingleUser(req, res);
+});
+
+//route for save user
+router.post('/user', function (req, res) {
+    console.log("save user :)");
+    saveUser(req, res);
+});
+
+//route for update user
+router.put('/user/:userId', function (req, res) {
+    console.log("save user :)");
+    updateUser(req, res);
+});
+
+//route for delete user
+router.delete('/user/:userId', function (req, res) {
+    console.log("save user :)");
+    deleteUser(req, res);
+});
+
+
+//------------------ ROUTES DONE --------------------
+
 
 
 //after connection spin up express server to listen for requests
-
 connection.connect(
     function (err) {
         if (!err) {
@@ -130,7 +168,7 @@ function setupExpressApp() {
     app.get('/', function (req, res, next) {
 
         //Path to my angular app
-        res.status(200).sendFile(path.join( __dirname+ '../app/index.html'));
+        res.status(200).sendFile(path.join(__dirname + '../app/index.html'));
     });
 
     app.use('/api', router);
@@ -227,16 +265,58 @@ function landingPage(req, res) {
                     info: 'This will delete a single quote'
                 }
             }
+
+            ,
+            {
+                path: '/api/users',
+                info: {
+                    type: 'GET',
+                    info: 'This will fetch all users'
+                }
+            },
+            {
+                path: '/api/user',
+                info: {
+                    type: 'POST',
+                    info: 'This will save a single user'
+                }
+            },
+            {
+                path: '/api/user/:userId',
+                info: {
+                    type: 'GET',
+                    info: 'This will fetch a single user by id'
+                }
+            },
+            {
+                path: '/api/user/:userId',
+                info: {
+                    type: 'PUT',
+                    info: 'This will update a single user'
+                }
+            },
+            {
+                path: '/api/user/:userId',
+                info: {
+                    type: 'DELETE',
+                    info: 'This will delete a single user'
+                }
+            }
         ]
     });
 }
 
+/**
+ * ================ Access Control ===============
+ */
 
+/**
+ * updateUserPassword - set password when null
+ * @param req
+ * @param res
+ */
 function updateUserPassword(req, res) {
-     console.log("updateUserPassword");
-
     var today = new Date();
-
     var user = {
         "username": req.body.username,
         "password": req.body.password,
@@ -246,17 +326,13 @@ function updateUserPassword(req, res) {
 
     //lets encrypt the password, when its done creating the hashed value we can save it to the db
     bcrypt.hash(user.password, 10).then(function (hash) {
-        console.log("user.password : ", user.password);
-        console.log("user.username : ", user.username);
-        console.log("hash : ", hash);
 
         //override user password with hashed value
         user.password = hash;
 
 
         //save to db
-        console.log('UPDATE users SET password = "'+hash+'"  where username = "'+user.username+'"');
-        connection.query('UPDATE users SET password = "'+hash+'"  where username = "'+user.username+'"',  function (error, results, fields) {
+        connection.query('UPDATE users SET password = "' + hash + '"  where username = "' + user.username + '"', function (error, results, fields) {
 
             if (error) {
                 console.log("database error ocurred", error);
@@ -265,12 +341,13 @@ function updateUserPassword(req, res) {
                     "message": "database error ocurred"
                 })
             } else {
-                 console.log('results: ', results);
+                // res.send({
+                //     "code": 200,
+                //     "message": "password set"
+                // });
 
-                res.send({
-                    "code": 200,
-                    "message": "password set"
-                });
+                login(req,res);
+
             }
         });
 
@@ -278,7 +355,11 @@ function updateUserPassword(req, res) {
 
 }
 
-
+/**
+ * register -adds user - reader role
+ * @param req
+ * @param res
+ */
 function register(req, res) {
     // console.log("req", JSON.stringify(req.body));
 
@@ -289,6 +370,7 @@ function register(req, res) {
         "last_name": req.body.last_name,
         "username": req.body.username,
         "password": req.body.password,
+        "role_id": 3, //reader role
         "created": today,
         "modified": today
     };
@@ -326,7 +408,11 @@ function register(req, res) {
 
 }
 
-
+/**
+ * login
+ * @param req
+ * @param res
+ */
 function login(req, res) {
 
     //   console.log("req", JSON.stringify(req.body));
@@ -334,58 +420,81 @@ function login(req, res) {
     var username = req.body.username;
     var password = req.body.password;
 
-    connection.query('SELECT * FROM users WHERE username = ?', [username], function (error, results, fields) {
-        if (error) {
-            //console.log("error ocurred",error);
-            res.send({
-                "code": 400,
-                "message": "database error ocurred"
-            })
-        } else {
-            // console.log('results: ', results);c
+    connection.query('SELECT u.id,u.first_name,u.last_name,u.username,u.password,u.created,u.modified,u.role_id,r.app_role FROM users u LEFT JOIN roles r on u.role_id = r.id WHERE u.username = ? ', [username], function (error, results, fields) {
+            if (error) {
+                console.log("error ocurred",error);
+                res.send({
+                    "code": 400,
+                    "message": "database error ocurred"
+                })
+            } else {
+                // console.log('results: ', results);c
 
-            if (results.length > 0) {
+                if (results.length > 0) {
 
-                if (results[0].password != null) {
+                    if (results[0].password != null) {
 
-                    bcrypt.compare(password, results[0].password).then(function (matched) {
-                        // matched == true
+                        bcrypt.compare(password, results[0].password).then(function (matched) {
+                            // matched == true
 
-                        if (matched) {
-                            res.send({
-                                "code": 200,
-                                "message": "login ok"
-                            });
-                        }
-                        else {
-                            res.send({
-                                "code": 500,
-                                "message": "username and password does not match"
-                            });
-                        }
+                            if (matched) {
+                                res.send({
+                                    "code": 200
+                                    , "message": "login ok"
+                                    , "user": {
+                                         "id": results[0].id
+                                        , "first_name": results[0].first_name
+                                        , "last_name": results[0].last_name
+                                        , "username": results[0].username
+                                        , "created": results[0].created
+                                        , "modified": results[0].modified
+                                        , "role_id": results[0].role_id
+                                        , "app_role": results[0].app_role
+                                    }
 
-                    });
+                                });
+                            }
+                            else {
+                                res.send({
+                                    "code": 500,
+                                    "error": "username and password does not match"
+                                });
+                            }
 
-                } else {
+                        });
+
+                    } else {
+                        res.send({
+                            "code": 500,
+                            "error": "user needs to provide password",
+                            "fix": "provide_password"
+                        });
+                    }
+
+
+                }
+                else {
                     res.send({
-                        "code": 500,
-                        "message": "user needs to provide password",
-                        "fix": "provide_password"
+                        "code": 204,
+                        "message": "username does not exits"
                     });
                 }
-
-
-            }
-            else {
-                res.send({
-                    "code": 204,
-                    "message": "username does not exits"
-                });
             }
         }
-    });
+    )
+    ;
 }
 
+
+/**
+ * ================ Quotes ===============
+ */
+
+/**
+ * listQuotes - returns all quotes
+ * @param req
+ * @param res
+ */
 
 function listQuotes(req, res) {
 
@@ -397,13 +506,11 @@ function listQuotes(req, res) {
                 "message": "database error ocurred"
             })
         } else {
-            // console.log('results: ', results);c
+            // console.log('results: ', results);
 
             if (results.length > 0) {
-                console.log("empty");
                 res.send(results);
             } else {
-                console.log("empty else");
                 res.send([]);
             }
 
@@ -534,3 +641,184 @@ function deleteQuote(req, res) {
 
 
 }
+
+
+/**
+ * ================ Users ===============
+ */
+
+
+/**
+ * listQuotes - returns all quotes
+ * @param req
+ * @param res
+ */
+
+function listUsers(req, res) {
+
+    connection.query('SELECT u.id,u.first_name,u.last_name,u.username,u.password,u.created,u.modified,u.role_id,r.app_role FROM users u LEFT JOIN roles r on u.role_id = r.id order by u.id', function (error, results, fields) {
+        if (error) {
+            //console.log("error ocurred",error);
+            res.send({
+                "code": 400,
+                "message": "database error ocurred"
+            })
+        } else {
+             // console.log('results: ', results);
+
+            if (results.length > 0) {
+                res.send(results);
+            } else {
+                res.send([]);
+            }
+
+        }
+
+    });
+
+}
+
+function listSingleUser(req, res) {
+
+    var userId = req.params.userId;
+
+    connection.query('SELECT * FROM users where id=? ', userId, function (error, results, fields) {
+        if (error) {
+            //console.log("error ocurred",error);
+            res.send({
+                "code": 400,
+                "message": "database error ocurred"
+            })
+        } else {
+            // console.log('results: ', results);c
+
+            if (results.length > 0) {
+                console.log("empty");
+                res.send(results[0]);
+            } else {
+                console.log("empty else");
+                res.send([]);
+            }
+
+        }
+
+    });
+
+}
+
+//TODO relook save
+function saveUser(req, res) {
+
+    var today = new Date();
+
+    var user = {
+
+        "first_name": req.body.first_name,
+        "last_name": req.body.last_name,
+        "username": req.body.username,
+        "password": req.body.password,
+        "role_id": req.body.role_id,
+        "created": req.body.created,
+        "modified": req.body.modified
+    };
+
+
+    //TODO dont encrypt password again
+    //lets encrypt the password, when its done creating the hashed value we can save it to the db
+    bcrypt.hash(user.password, 10).then(function (hash) {
+        console.log("user.password : ", user.password);
+        console.log("hash : ", hash);
+
+        //override user password with hashed value
+        user.password = hash;
+
+
+        //save to db
+
+        //TODO should be update
+        connection.query('INSERT INTO users SET ?', user, function (error, results, fields) {
+            console.log(fields);
+            if (error) {
+                console.log("database error ocurred", error);
+                res.send({
+                    "code": 400,
+                    "message": "database error ocurred"
+                })
+            } else {
+                // console.log('results: ', results);
+
+                res.send({
+                    "code": 200,
+                    "message": "user saved"
+                });
+            }
+        });
+
+    });
+
+
+}
+
+function updateUser(req, res) {
+
+    var userId = req.params.userId;
+
+    var today = new Date();
+
+    var user = {
+
+        "first_name": req.body.first_name,
+        "last_name": req.body.last_name,
+        "username": req.body.username,
+        //"password": req.body.password,
+        "role_id": req.body.role_id,
+        "created": req.body.created,
+        "modified": req.body.modified
+    };
+
+
+
+    //save to db
+    connection.query('UPDATE users SET ? where id = ' + userId, quote, function (error, results, fields) {
+
+        if (error) {
+            console.log("database error ocurred", error);
+            res.send({
+                "code": 400,
+                "message": "database error ocurred"
+            })
+        } else {
+            res.send({
+                "code": 200,
+                "message": "user updated"
+            });
+        }
+    });
+
+}
+
+function deleteUser(req, res) {
+
+    var userId = req.params.userId;
+
+
+    //delete from db
+    connection.query('DELETE FROM users where id = ?', userId, function (error, results, fields) {
+
+        if (error) {
+            console.log("database error ocurred", error);
+            res.send({
+                "code": 400,
+                "message": "database error ocurred"
+            })
+        } else {
+            res.send({
+                "code": 200,
+                "message": "user deleted"
+            });
+        }
+    });
+
+
+}
+

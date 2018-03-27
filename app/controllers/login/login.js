@@ -1,16 +1,7 @@
-//'use strict';
+'use strict';
 
-//app.login = angular.module('quoteApp.login', ['ngRoute']);
-
-// .config(['$routeProvider', function ($routeProvider) {
-//     $routeProvider.when('/login', {
-//         templateUrl: 'login/login.html',
-//         controller: 'LoginCtrl'
-//     });
-// }])
-
-app.controller('LoginCtrl', ['$scope', '$state', '$http', '$window', 'LoginService',
-    function ($scope, $state, $http, $window, LoginService) {
+angular.module('quoteApp').controller('LoginCtrl', ['$scope', '$state', 'LoginService',
+    function ($scope, $state, LoginService) {
         $scope.title = "Login";
 
         $scope.formSubmit = function () {
@@ -18,9 +9,8 @@ app.controller('LoginCtrl', ['$scope', '$state', '$http', '$window', 'LoginServi
                 $scope.error = '';
                 $scope.username = '';
                 $scope.password = '';
+
                 $state.transitionTo('quotes');
-            } else {
-                $scope.error = "Login Error!";
             }
         };
 

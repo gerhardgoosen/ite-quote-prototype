@@ -7,12 +7,6 @@ var app = angular.module('quoteApp', [
     , 'angular-md5'
     , 'angularMoment'
     , 'ngMaterial'
-    , 'ngMessages'
-    //'quoteApp.login',
-    // 'quoteApp.register',
-    // 'quoteApp.quotes',
-    // 'quoteApp.users',
-    // 'quoteApp.info',
     , 'quoteApp.version'
     , 'quoteApp.name'
 ]);
@@ -36,7 +30,7 @@ app.config(['$locationProvider', '$stateProvider', '$urlRouterProvider', '$httpP
             url: '/password',
             templateUrl: 'controllers/password/password.html',
             controller: 'PasswordCtrl'
-    })
+        })
         .state('register', {
             url: '/register',
             templateUrl: 'controllers/register/register.html',
@@ -64,7 +58,7 @@ app.config(['$locationProvider', '$stateProvider', '$urlRouterProvider', '$httpP
 
 app.run(function ($rootScope, $http, $location, $state, LoginService) {
 
-
+    console.log("app.run");
     $rootScope.config = {
         "api_url": "http://localhost:5000/api"
     };
@@ -74,8 +68,10 @@ app.run(function ($rootScope, $http, $location, $state, LoginService) {
     $rootScope.$on('$stateChangeStart',
         function (event, toState, toParams, fromState, fromParams) {
             console.log('Changed state to: ' + JSON.stringify(toState));
+            if (toState.name !== 'login' && !LoginService.isAuthenticated()) {
+                $state.transitionTo('login');
+            }
         });
-
 
 });
 
@@ -107,23 +103,21 @@ app.factory('LoginService', function ($state, $http, $rootScope, md5) {
 
             $http.post($rootScope.config.api_url + '/login', postData, $rootScope.config.httpOptions)
                 .then(function (response) {
-                    console.log('response');
-                    console.log(response);
 
-                    //  $rootScope.config.salt = response.results[0].salt;
-                    console.log('message : ' + response.data.message);
-                    scope.error = response.data.message;
+                    scope.error = response.data.error;
 
                     if (response.data.fix != null) {
                         console.log('response.data.fix:' + response.data.fix);
                         if (response.data.fix == 'provide_password') {
-                            console.log('state.transitionTo');
-
                             $state.transitionTo('password');
-
-                            scope.error = response.data.message;
+                            scope.error = response.data.error;
                         }
-                    }else{
+                    } else if (response.data.code === 200 && response.data.message === "login ok") {
+
+                        $rootScope.currentUser = response.data.user;
+
+                        console.log($rootScope.currentUser);
+
                         isAuthenticated = true;
                         $state.transitionTo('quotes');
                     }
@@ -153,14 +147,20 @@ app.factory('LoginService', function ($state, $http, $rootScope, md5) {
             console.log('md5.createHash');
             console.log(h);
 
-            $http.post($rootScope.config.api_url + '/setPassword/' ,postData, $rootScope.config.httpOptions)
+            $http.post($rootScope.config.api_url + '/setPassword/', postData, $rootScope.config.httpOptions)
                 .then(function (response) {
-                    console.log('response');
-                    console.log(response);
+                    scope.error = response.data.error;
 
-                    //  $rootScope.config.salt = response.results[0].salt;
-                    console.log('message : ' + response.data.message);
-                    scope.error = response.data.message;
+
+                    if (response.data.code === 200 && response.data.message === "login ok") {
+
+                        $rootScope.currentUser = response.data.user;
+
+                        console.log($rootScope.currentUser);
+
+                        isAuthenticated = true;
+                        $state.transitionTo('quotes');
+                    }
 
                     isAuthenticated = true;
                     $state.transitionTo('quotes');
@@ -218,11 +218,20 @@ app.controller("QuotesAppCtrl",
 
         };
 
+
+        $scope.checkUserRole = function (appRole) {
+
+            if ($rootScope.currentUser) {
+                //console.log("checkUserRole") ;
+                //console.log("angular.equals($rootScope.currentUser.app_role,appRole) :" + angular.equals($rootScope.currentUser.app_role,appRole));
+                return (angular.equals($rootScope.currentUser.app_role, appRole));
+            }
+
+        };
+
         $scope.logout = function () {
             console.log("Logout!!");
             if (!LoginService.logout()) {
-                $scope.error = "Successfully Logged out !";
-
                 $scope.username = '';
                 $scope.password = '';
                 $state.transitionTo('login');
@@ -274,3 +283,6 @@ app.controller("QuotesAppCtrl",
 
     }
     ]);
+
+
+

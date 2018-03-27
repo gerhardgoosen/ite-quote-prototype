@@ -1,19 +1,41 @@
 /* app css stylesheet */
 
+html, body {
+  height: 100%;
+  margin: 0;
+}
+.container {
+  min-height: 100%;
+  margin-bottom: 100px;
+}
+
+
+.footer {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  padding: 1rem;
+  background-color: #efefef;
+  text-align: center;
+}
+
+
 .menu {
+  text-align: right;
   list-style: none;
-  border-bottom: 0.1em solid black;
+ /* border-bottom: 0.1em solid black;*/
   margin-bottom: 2em;
   padding: 0 0 0.5em;
 }
-
+/*
 .menu:before {
   content: "[";
 }
 
 .menu:after {
   content: "]";
-}
+}*/
 
 .menu > li {
   display: inline;
@@ -22,4 +44,9 @@
 .menu > li + li:before {
   content: "|";
   padding-right: 0.3em;
+}
+
+
+.page-header{
+  text-align: right;
 }

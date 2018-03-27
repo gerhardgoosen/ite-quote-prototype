@@ -1,14 +1,15 @@
 'use strict';
 
-describe('quoteApp.info module', function() {
+describe('quoteApp module', function() {
 
-  beforeEach(module('quoteApp.info'));
+  beforeEach(module('quoteApp'));
+  var scope={}, state={}, loginService=module('quoteApp').factory('LoginService');
 
-  describe('v controller', function(){
+  describe('info controller', function(){
 
     it('should ....', inject(function($controller) {
       //spec body
-      var infoCtrl = $controller('InfoCtrl');
+      var infoCtrl = $controller('InfoCtrl', {$scope: scope,$state: state,LoginService: loginService});
       expect(infoCtrl).toBeDefined();
     }));
 

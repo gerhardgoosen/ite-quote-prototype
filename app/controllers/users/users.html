@@ -1,1 +1,28 @@
-<h1>{{title}}</h1>
+
+<div class="row" ng-show="error">
+    <div class="col-md-12">
+        {{error}}
+    </div>
+</div>
+
+
+<div class="row" ng-hide="error">
+    <div class="col-md-12">
+        <h1>{{title}}</h1>
+    </div>
+</div>
+
+<div class="row" ng-hide="error">
+    <div class="col-md-12">
+        <input type="search" ng-model="q" placeholder="filter users..." aria-label="filter users" />
+    </div>
+</div>
+
+<div class="row animate-repeat" ng-hide="error" ng-repeat="user in users | filter:q as results track by user.username">
+    <div class="col-md-12">
+        [{{$index + 1}}] {{user.username}} who name is {{user.first_name}}.
+    </div>
+    <div class="col-md-12" ng-if="results.length === 0">
+        <strong>No results found...</strong>
+    </div>
+</div>

@@ -1,16 +1,17 @@
 'use strict';
 
-describe('quoteApp.login module', function() {
+describe('quoteApp module', function () {
 
-  beforeEach(module('quoteApp.login'));
+    beforeEach(module('quoteApp'));
 
-  describe('login controller', function(){
+    var scope = {}, state = {}, loginService = {};
+    describe('users controller', function () {
 
-    it('should ....', inject(function($controller) {
-      //spec body
-      var loginCtrl = $controller('LoginCtrl');
-      expect(loginCtrl).toBeDefined();
-    }));
+        it('should ....', inject(function ($controller) {
+            //spec body
+            var usersCtrl = $controller('UsersCtrl', {$scope: scope,$state: state,LoginService: loginService});
+            expect(usersCtrl).toBeDefined();
+        }));
 
-  });
+    });
 });

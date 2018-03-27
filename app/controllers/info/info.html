@@ -1,5 +1,55 @@
-<h1>{{title}}</h1>
-<p>
-  {{ 'App Name is %NAME%.' | interpolateName }}
-  {{ 'Current version is v%VERSION%.' | interpolate }}
-</p>
+<div class="row">
+    <div class="col-md-12">
+        <h1>{{title}}</h1>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <ul>
+            <li>{{ 'App Name is %NAME%.' | interpolateName }}</li>
+            <li>{{ 'Current version is v%VERSION%.' | interpolate }}</li>
+        </ul>
+    </div>
+    <br/>
+</div>
+
+
+<div class="row">
+    <div class="col-md-12">
+
+        <h1>This application stores <i>"Quotes"</i></h1>
+
+        <div class="row">
+            <div class="col-md-12">
+                <p>Admin Users</p>
+                <ul>
+                    <li><i>create/retrieve/update/delete</i> users</li>
+                    <li><i>create/retrieve/update/delete</i> quotes</li>
+                </ul>
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="col-md-12">
+                <p>Editor Users</p>
+                <ul>
+                    <li><i>create/retrieve/update/delete</i> quotes</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <p>Reader Users</p>
+                <ul>
+                    <li><i>retrieve</i> quotes</li>
+                </ul>
+            </div>
+        </div>
+
+
+    </div>
+</div>
+
