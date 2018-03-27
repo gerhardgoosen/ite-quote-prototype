@@ -1,4 +1,3 @@
-
 <div class="row" ng-show="error">
     <div class="col-md-12">
         {{error}}
@@ -14,14 +13,32 @@
 
 <div class="row" ng-hide="error">
     <div class="col-md-12">
-        <input type="search" ng-model="q" placeholder="filter users..." aria-label="filter users" />
+        <input type="search" ng-model="q" placeholder="filter users..." aria-label="filter users"/>
     </div>
 </div>
 
-<div class="row animate-repeat" ng-hide="error" ng-repeat="user in users | filter:q as results track by user.username">
-    <div class="col-md-12">
-        [{{$index + 1}}] {{user.username}} who name is {{user.first_name}}.
-    </div>
+
+<div class="row animate-repeat" ng-hide="error"
+     ng-repeat="user in users | filter:q as results track by user.username">
+
+    <md-card class="col-md-12">
+        <md-card-title>
+            <md-card-title-text>
+                <span class="md-headline">username: {{user.username}}</span>
+                <span class="md-subhead">first_name: {{user.first_name}}</span>
+                <span class="md-subhead">last_name: {{user.last_name}}</span>
+                <span class="md-subhead">modified: {{user.modified}}</span>
+            </md-card-title-text>
+            <md-card-title-media>
+                <div class="md-media-lg card-media"></div>
+            </md-card-title-media>
+        </md-card-title>
+        <md-card-actions layout="row" layout-align="end center">
+            <md-button ng-show='checkUserRole("admin")'>Edit</md-button>
+            <md-button ng-show='checkUserRole("admin")'>Delete</md-button>
+        </md-card-actions>
+    </md-card>
+
     <div class="col-md-12" ng-if="results.length === 0">
         <strong>No results found...</strong>
     </div>

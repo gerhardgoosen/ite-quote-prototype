@@ -12,14 +12,31 @@
 
 <div class="row" ng-hide="error">
     <div class="col-md-12">
-        <input type="search" ng-model="q" placeholder="filter quotes..." aria-label="filter quotes" />
+        <input type="search" ng-model="q" placeholder="filter quotes..." aria-label="filter quotes"/>
     </div>
 </div>
 
-<div class="row animate-repeat"  ng-hide="error" ng-repeat="quote in quotes | filter:q as results track by quote.author">
-    <div class="col-md-12">
-        [{{$index + 1}}] {{quote.quote}}, author: {{quote.author}}, year: {{quote.year}}
-    </div>
+
+<div class="row animate-repeat" ng-hide="error"
+     ng-repeat="quote in quotes | filter:q as results track by quote.author">
+
+    <md-card class="col-md-12">
+        <md-card-title>
+            <md-card-title-text>
+                <span class="md-headline">{{quote.quote}}</span>
+                <span class="md-subhead">author: {{quote.author}}</span>
+                <span class="md-subhead">year: {{quote.year}}</span>
+            </md-card-title-text>
+            <md-card-title-media>
+                <div class="md-media-lg card-media"></div>
+            </md-card-title-media>
+        </md-card-title>
+        <md-card-actions layout="row" layout-align="end center">
+            <md-button ng-show='checkUserRole("admin") ||  checkUserRole("editor")'>Edit</md-button>
+            <md-button ng-show='checkUserRole("admin") ||  checkUserRole("editor")'>Delete</md-button>
+        </md-card-actions>
+    </md-card>
+
     <div class="col-md-12" ng-if="results.length === 0">
         <strong>No results found...</strong>
     </div>
