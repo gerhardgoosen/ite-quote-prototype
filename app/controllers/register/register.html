@@ -1,1 +1,61 @@
-<h1>{{title}}</h1>
+<div class="row" ng-show="error">
+    <div class="col-md-12">
+        {{error}}
+    </div>
+</div>
+
+
+<div class="row animate-repeat"  >
+
+    <md-card class="col-md-12">
+        <md-card-title>
+            <h1>{{title}}</h1>
+        </md-card-title>
+
+
+        <form ng-submit="formSubmit()" class="form ">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <input type="text" class="form-control" ng-model="tmpUser.username" placeholder="username"
+                           required=""/>
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-control" ng-model="tmpUser.first_name" placeholder="firstname"
+                           required=""/>
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-control" ng-model="tmpUser.last_name" placeholder="lastname"
+                           required=""/>
+                </div>
+                <div class="form-group">
+                    <label>role</label>
+                    <div class="radio">
+                        <label><input type="radio" name="tmpUser.role" ng-model="tmpUser.role" value="admin">admin</label>
+                    </div>
+                    <div class="radio">
+                        <label><input type="radio" name="tmpUser.role" ng-model="tmpUser.role" value="editor">editor</label>
+                    </div>
+                    <div class="radio">
+                        <label><input type="radio" name="tmpUser.role" ng-model="tmpUser.role" value="reader"> reader</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <span class="text-danger">{{ error }}</span>
+                </div>
+
+                <div class="form-group">
+                    <button type="submit" ng-show='checkUserRole("admin")' class="btn btn-success">Save</button>
+                    <button ng-click="clear();" class="btn btn-success">Clear</button>
+                    <button ng-click="cancel();" class="btn btn-success">Cancel</button>
+                </div>
+            </div>
+            <div class="col-md-12" ng-show="message">
+                {{message}}
+            </div>
+
+        </form>
+
+
+    </md-card>
+</div>

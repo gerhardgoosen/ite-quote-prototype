@@ -11,9 +11,19 @@
     </div>
 </div>
 
-<div class="row" ng-hide="error">
+<div class="row page-header" ng-hide="error">
     <div class="col-md-12">
-        <input type="search" ng-model="q" placeholder="filter users..." aria-label="filter users"/>
+        <md-input-container>
+            <input type="search" ng-model="q" placeholder="filter users..." aria-label="filter users"/>
+        </md-input-container>
+    </div>
+</div>
+
+<div class="row page-header" ng-hide="error">
+    <div class="col-md-12">
+        <div class="form-group">
+            <button  ng-click="addUser();" class="btn btn-success">Add User</button>
+        </div>
     </div>
 </div>
 
@@ -24,10 +34,13 @@
     <md-card class="col-md-12">
         <md-card-title>
             <md-card-title-text>
-                <span class="md-headline">username: {{user.username}}</span>
+                <span class="md-headline">{{user.username}}</span>
+
+                <span class="md-subhead">role: {{user.app_role}}</span>
                 <span class="md-subhead">first_name: {{user.first_name}}</span>
                 <span class="md-subhead">last_name: {{user.last_name}}</span>
-                <span class="md-subhead">modified: {{user.modified}}</span>
+                <span class="md-subhead">created: {{user.created | date}}</span>
+                <span class="md-subhead">modified: {{user.modified | date}}</span>
             </md-card-title-text>
             <md-card-title-media>
                 <div class="md-media-lg card-media"></div>
@@ -43,3 +56,6 @@
         <strong>No results found...</strong>
     </div>
 </div>
+
+
+

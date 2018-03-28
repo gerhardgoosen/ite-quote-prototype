@@ -1,4 +1,3 @@
-
 var bcrypt = require('bcrypt');
 var mysql = require('mysql');
 var express = require("express");
@@ -56,7 +55,6 @@ router.post('/setPassword', function (req, res) {
     console.log("setPassword :)");
     updateUserPassword(req, res);
 });
-
 
 
 //---------------- QUOTES ----------------------
@@ -128,7 +126,6 @@ router.delete('/user/:userId', function (req, res) {
 
 
 //------------------ ROUTES DONE --------------------
-
 
 
 //after connection spin up express server to listen for requests
@@ -346,7 +343,7 @@ function updateUserPassword(req, res) {
                 //     "message": "password set"
                 // });
 
-                login(req,res);
+                login(req, res);
 
             }
         });
@@ -361,7 +358,7 @@ function updateUserPassword(req, res) {
  * @param res
  */
 function register(req, res) {
-    // console.log("req", JSON.stringify(req.body));
+      console.log("req", JSON.stringify(req.body));
 
     var today = new Date();
 
@@ -369,44 +366,51 @@ function register(req, res) {
         "first_name": req.body.first_name,
         "last_name": req.body.last_name,
         "username": req.body.username,
-        "password": req.body.password,
-        "role_id": 3, //reader role
+        "role_id": "3",
         "created": today,
         "modified": today
     };
 
-    //lets encrypt the password, when its done creating the hashed value we can save it to the db
-    bcrypt.hash(user.password, 10).then(function (hash) {
-        console.log("user.password : ", user.password);
-        console.log("hash : ", hash);
 
-        //override user password with hashed value
-        user.password = hash;
+    connection.query('SELECT id FROM roles where app_role="' + req.body.role + '"', function (error, result, fields) {
+        if (error) {
+            //console.log("error ocurred",error);
+            res.send({
+                "code": 400,
+                "message": "database error ocurred roles"
+            })
+        } else {
 
 
-        //save to db
-        connection.query('INSERT INTO users SET ?', user, function (error, results, fields) {
-            console.log(fields);
-            if (error) {
-                console.log("database error ocurred", error);
-                res.send({
-                    "code": 400,
-                    "message": "database error ocurred"
-                })
-            } else {
-                // console.log('results: ', results);
+            user.role_id = result[0].id;
+            console.log(' user.role_id: ',  user.role_id);
 
-                res.send({
-                    "code": 200,
-                    "message": "register ok"
-                });
-            }
-        });
+            //save to db
+            connection.query('INSERT INTO users SET ?', user, function (error, results, fields) {
+                if (error) {
+                    console.log("database error ocurred", error);
+                    res.send({
+                        "code": 400,
+                        "message": "database error ocurred users"
+                    })
+                } else {
+                    console.log('results insertId: ', results.insertId);
+
+                    res.send({
+                        "code": 200,
+                        "id": results.insertId,
+                    });
+                }
+            });
+
+        }
 
     });
 
 
-}
+
+
+};
 
 /**
  * login
@@ -422,7 +426,7 @@ function login(req, res) {
 
     connection.query('SELECT u.id,u.first_name,u.last_name,u.username,u.password,u.created,u.modified,u.role_id,r.app_role FROM users u LEFT JOIN roles r on u.role_id = r.id WHERE u.username = ? ', [username], function (error, results, fields) {
             if (error) {
-                console.log("error ocurred",error);
+                console.log("error ocurred", error);
                 res.send({
                     "code": 400,
                     "message": "database error ocurred"
@@ -442,7 +446,7 @@ function login(req, res) {
                                     "code": 200
                                     , "message": "login ok"
                                     , "user": {
-                                         "id": results[0].id
+                                        "id": results[0].id
                                         , "first_name": results[0].first_name
                                         , "last_name": results[0].last_name
                                         , "username": results[0].username
@@ -664,7 +668,7 @@ function listUsers(req, res) {
                 "message": "database error ocurred"
             })
         } else {
-             // console.log('results: ', results);
+            // console.log('results: ', results);
 
             if (results.length > 0) {
                 res.send(results);
@@ -775,7 +779,6 @@ function updateUser(req, res) {
         "created": req.body.created,
         "modified": req.body.modified
     };
-
 
 
     //save to db

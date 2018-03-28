@@ -122,7 +122,6 @@ app.factory('LoginService', function ($state, $http, $rootScope, md5) {
                         $state.transitionTo('quotes');
                     }
 
-                    //$rootScope.getToken(username, md5.createHash(password + $rootScope.config.salt));
 
                 })
                 .catch(function (error) {

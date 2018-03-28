@@ -10,9 +10,11 @@
     </div>
 </div>
 
-<div class="row" ng-hide="error">
+<div class="row page-header" ng-hide="error">
     <div class="col-md-12">
-        <input type="search" ng-model="q" placeholder="filter quotes..." aria-label="filter quotes"/>
+        <md-input-container>
+            <input type="search" ng-model="q" placeholder="filter quotes..." aria-label="filter quotes"/>
+        </md-input-container>
     </div>
 </div>
 
@@ -26,6 +28,9 @@
                 <span class="md-headline">{{quote.quote}}</span>
                 <span class="md-subhead">author: {{quote.author}}</span>
                 <span class="md-subhead">year: {{quote.year}}</span>
+                <span class="md-subhead">source: {{quote.source}}</span>
+                <span class="md-subhead">created: {{quote.created  | date}}</span>
+                <span class="md-subhead">modified: {{quote.modified  | date}}</span>
             </md-card-title-text>
             <md-card-title-media>
                 <div class="md-media-lg card-media"></div>
