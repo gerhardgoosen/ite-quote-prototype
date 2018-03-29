@@ -1,9 +1,7 @@
 'use strict';
 
-angular.module('quoteApp').controller('RegisterCtrl', ['$rootScope', '$scope', '$state', '$http', '$window','LoginService', function ($rootScope, $scope, $state, $http, $window, LoginService) {
-    $scope.title = "Register New User";
-
-    $scope.status = false;
+angular.module('quoteApp').controller('AddQuoteCtrl', ['$rootScope', '$scope', '$state', '$http', '$window', 'LoginService', function ($rootScope, $scope, $state, $http, $window, LoginService) {
+    $scope.title = "Add New Quote";
 
 
     $scope.init = function () {
@@ -11,7 +9,7 @@ angular.module('quoteApp').controller('RegisterCtrl', ['$rootScope', '$scope', '
             $state.transitionTo('login');
         }
         else {
-            $rootScope.tmpUser = {};
+            $rootScope.tmpQuote = {};
         }
     };
 
@@ -20,16 +18,14 @@ angular.module('quoteApp').controller('RegisterCtrl', ['$rootScope', '$scope', '
         history.back();//eish
     };
 
-
     $scope.clear = function () {
-        $rootScope.tmpUser = {};
+        $rootScope.tmpQuote = {};
     };
 
-
     $scope.formSubmit = function () {
-        console.log('tmpUser : ' + $rootScope.tmpUser);
+        console.log('tmpQuote : ' + $rootScope.tmpQuote);
 
-        $http.post($rootScope.config.api_url + '/register', $rootScope.tmpUser, $rootScope.config.httpOptions)
+        $http.post($rootScope.config.api_url + '/quote', $rootScope.tmpQuote, $rootScope.config.httpOptions)
             .then(function (response) {
 
                 $scope.error = response.data.error;
@@ -37,10 +33,10 @@ angular.module('quoteApp').controller('RegisterCtrl', ['$rootScope', '$scope', '
                 if (response.data.code === 200) {
                     console.log('ok');
                     $scope.message = "success";
-                    $rootScope.tmpUser = {};
-                    $state.transitionTo('users');
+                    $rootScope.tmpQuote = {};
+                    $state.transitionTo('quotes');
                 } else {
-                    $scope.message = "error : Username taken";
+                    $scope.message = "error saving quote";
                 }
             })
             .catch(function (error) {

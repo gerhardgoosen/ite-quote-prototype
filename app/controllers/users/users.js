@@ -1,9 +1,16 @@
 'use strict';
 
-angular.module('quoteApp').controller('UsersCtrl', ['$rootScope', '$scope', '$state', '$http', '$window', 'LoginService', function ($rootScope, $scope, $state, $http, $window, LoginService) {
+
+angular.module('quoteApp').controller('UsersCtrl', ['$rootScope', '$scope', '$state', '$http', '$window', '$mdDialog', 'LoginService', function ($rootScope, $scope, $state, $http, $window, $mdDialog, LoginService) {
     $scope.title = "Users";
     $scope.users = [];
     $scope.screenMode = 'list';
+
+
+    $scope.cancel = function (user) {
+        console.log('cancel');
+        user.edit = null;
+    };
 
 
     $scope.init = function () {
@@ -14,17 +21,8 @@ angular.module('quoteApp').controller('UsersCtrl', ['$rootScope', '$scope', '$st
 
             if ($rootScope.currentUser && angular.equals($rootScope.currentUser.app_role, "admin")) {
 
-                $http.get($rootScope.config.api_url + '/users', $rootScope.config.httpOptions)
-                    .then(function (response) {
-                        console.log('response.data : ' + JSON.stringify(response.data));
-                        $scope.users = response.data;
-                        console.log('response.data : ' + JSON.stringify($scope.users));
-                    })
-                    .catch(function (error) {
-                        console.log(error);
-                        $scope.error = error;
+                $scope.fetchUsers();
 
-                    });
             } else {
                 $scope.error = "Insufficient Access";
             }
@@ -33,62 +31,103 @@ angular.module('quoteApp').controller('UsersCtrl', ['$rootScope', '$scope', '$st
         }
     };
 
+    $scope.fetchUsers = function () {
+        $http.get($rootScope.config.api_url + '/users', $rootScope.config.httpOptions)
+            .then(function (response) {
+                console.log('response.data : ' + JSON.stringify(response.data));
+                $scope.users = response.data;
+                console.log('response.data : ' + JSON.stringify($scope.users));
+            })
+            .catch(function (error) {
+                console.log(error);
+                $scope.error = error;
+
+            });
+    };
+
+
     $scope.addUser = function () {
         console.log('addUser : ');
         $state.transitionTo('register');
     }
 
+    $scope.editUser  = function (user) {
+        console.log('editUser : ');
+        user.edit = true;
+    };
 
 
-    // $scope.setScreenMode = function (mode) {
-    //     console.log('setScreenMode : ' + mode);
-    //
-    //     if (mode === 'add') {
-    //         $scope.tmpUser = {
-    //             "first_name": ""
-    //             , "last_name": ""
-    //             , "username": ""
-    //             , "role": ""
-    //         };
-    //         console.log('tmpUser : ' + $scope.tmpUser);
-    //     }
-    //
-    //     $scope.screenMode = mode;
-    //
-    //
-    // };
-    //
-    // $scope.checkScreenMode = function (mode) {
-    //     console.log('checkScreenMode : ' + mode + " - " + angular.equals( $scope.screenMode , mode) );
-    //
-    //    return  angular.equals( $scope.screenMode , mode);
-    //
-    // };
-    //
-    //
-    //
-    //
-    // $scope.formSubmit = function (action,user) {
-    //
-    //
-    //     switch (action) {
-    //         case 'add': {
-    //             console.log('tmpUser : ' +user);
-    //             break;
-    //         }
-    //         case 'update': {
-    //             console.log('update : ' + user);
-    //             break;
-    //         }
-    //         case 'delete': {
-    //             console.log('delete : ' + user);
-    //             break;
-    //         }
-    //         default: {
-    //             $scope.error = "Unknown fuction";
-    //         }
-    //     }
-    // };
+
+    $scope.update = function (user, ev) {
+        console.log("update!!");
+        console.log("id,!!" + user.id);
+        // Appending dialog to document.body to cover sidenav in docs app
+        var confirm = $mdDialog.confirm()
+            .title('Are you sure?')
+            .textContent('Update this record?')
+            .ariaLabel('Update this record?')
+            .targetEvent(ev)
+            .ok('Yes')
+            .cancel('No');
+
+        $mdDialog.show(confirm).then(
+            function () {
+                $http.put($rootScope.config.api_url + '/user/'+user.id, user, $rootScope.config.httpOptions)
+                    .then(function (response) {
+
+                        console.log('response.data : ' + JSON.stringify(response.data));
+
+                        $scope.fetchUsers();
+
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                        $scope.error = error;
+                    });
+
+
+            }
+            , function () {
+                //cancel
+            });
+    };
+
+
+
+    $scope.showConfirm = function (user, ev) {
+        console.log("showConfirm!!");
+        console.log("id,!!" + user.id);
+
+        var confirm = $mdDialog.confirm()
+            .title('Are you sure?')
+            .textContent('Delete this record?')
+            .ariaLabel('Delete this record?')
+            .targetEvent(ev)
+            .ok('Yes')
+            .cancel('No');
+
+        $mdDialog.show(confirm).then(
+            function () {
+
+                $http.delete($rootScope.config.api_url + '/user/' + user.id, $rootScope.config.httpOptions)
+                    .then(function (response) {
+
+                        console.log('response.data : ' + JSON.stringify(response.data));
+
+                        $scope.fetchUsers();
+
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                        scope.error = error;
+                    });
+
+
+            }
+            , function () {
+                //cancel
+            });
+    };
 
 
     $scope.init();

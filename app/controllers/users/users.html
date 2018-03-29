@@ -22,7 +22,9 @@
 <div class="row page-header" ng-hide="error">
     <div class="col-md-12">
         <div class="form-group">
-            <button  ng-click="addUser();" class="btn btn-success">Add User</button>
+            <button ng-show='checkUserRole("admin") ||  checkUserRole("editor")' ng-click="addUser();"
+                    class="btn btn-success">Add User
+            </button>
         </div>
     </div>
 </div>
@@ -31,25 +33,68 @@
 <div class="row animate-repeat" ng-hide="error"
      ng-repeat="user in users | filter:q as results track by user.username">
 
-    <md-card class="col-md-12">
+    <md-card class="col-md-12" ng-hide="user.edit">
+        <md-card-actions layout="row" layout-align="end start">
+            <md-button ng-click="editUser( user )"  ng-show='checkUserRole("admin")'>Edit</md-button>
+            <md-button ng-show='checkUserRole("admin")' ng-click="showConfirm(user,$event)">Delete</md-button>
+        </md-card-actions>
         <md-card-title>
             <md-card-title-text>
                 <span class="md-headline">{{user.username}}</span>
-
                 <span class="md-subhead">role: {{user.app_role}}</span>
                 <span class="md-subhead">first_name: {{user.first_name}}</span>
                 <span class="md-subhead">last_name: {{user.last_name}}</span>
                 <span class="md-subhead">created: {{user.created | date}}</span>
                 <span class="md-subhead">modified: {{user.modified | date}}</span>
             </md-card-title-text>
+
             <md-card-title-media>
                 <div class="md-media-lg card-media"></div>
             </md-card-title-media>
+
         </md-card-title>
-        <md-card-actions layout="row" layout-align="end center">
-            <md-button ng-show='checkUserRole("admin")'>Edit</md-button>
-            <md-button ng-show='checkUserRole("admin")'>Delete</md-button>
-        </md-card-actions>
+
+    </md-card>
+
+    <md-card class="col-md-12" ng-show="user.edit">
+
+
+        <form ng-submit="formSubmit()" class="form ">
+            <div class="col-md-4">
+                <div class="form-group">
+
+                    <div class="form-group">
+                        <input type="text" class="form-control" ng-model="user.username" placeholder="username"
+                               required=""/>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" ng-model="user.first_name" placeholder="firstname"
+                               required=""/>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" ng-model="user.last_name" placeholder="lastname"
+                               required=""/>
+                    </div>
+
+
+                    <div class="form-group">
+                        <span class="text-danger">{{ error }}</span>
+                    </div>
+
+                    <md-card-actions layout="row" layout-align="end start">
+                        <md-button type="submit" ng-show='checkUserRole("admin")'
+                                   ng-click="update(user,$event);">Save
+                        </md-button>
+                        <md-button ng-click="cancel(user);">Cancel</md-button>
+                    </md-card-actions>
+
+                </div>
+                <div class="col-md-12" ng-show="message">
+                    {{message}}
+                </div>
+
+        </form>
+
     </md-card>
 
     <div class="col-md-12" ng-if="results.length === 0">

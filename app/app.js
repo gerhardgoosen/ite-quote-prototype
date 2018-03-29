@@ -36,6 +36,11 @@ app.config(['$locationProvider', '$stateProvider', '$urlRouterProvider', '$httpP
             templateUrl: 'controllers/register/register.html',
             controller: 'RegisterCtrl'
         })
+        .state('addQuote', {
+            url: '/addQuote',
+            templateUrl: 'controllers/addQuote/addQuote.html',
+            controller: 'AddQuoteCtrl'
+        })
         .state('quotes', {
             url: '/quotes',
             templateUrl: 'controllers/quotes/quotes.html',

@@ -68,7 +68,7 @@ router.get('/quotes', function (req, res) {
 
 //route for single quote
 router.get('/quote/:quoteId', function (req, res) {
-    console.log("list quotes :)");
+    console.log("list single quote :)");
     listSingleQuote(req, res);
 });
 
@@ -80,13 +80,13 @@ router.post('/quote', function (req, res) {
 
 //route for update quote
 router.put('/quote/:quoteId', function (req, res) {
-    console.log("save quote :)");
+    console.log("update quote :)");
     updateQuote(req, res);
 });
 
 //route for delete quote
 router.delete('/quote/:quoteId', function (req, res) {
-    console.log("save quote :)");
+    console.log("delete quote :)");
     deleteQuote(req, res);
 });
 
@@ -114,13 +114,13 @@ router.post('/user', function (req, res) {
 
 //route for update user
 router.put('/user/:userId', function (req, res) {
-    console.log("save user :)");
+    console.log("update user :)");
     updateUser(req, res);
 });
 
 //route for delete user
 router.delete('/user/:userId', function (req, res) {
-    console.log("save user :)");
+    console.log("delete user :)");
     deleteUser(req, res);
 });
 
@@ -709,14 +709,13 @@ function listSingleUser(req, res) {
     });
 
 }
-
+/*
 //TODO relook save
 function saveUser(req, res) {
 
     var today = new Date();
 
     var user = {
-
         "first_name": req.body.first_name,
         "last_name": req.body.last_name,
         "username": req.body.username,
@@ -761,7 +760,7 @@ function saveUser(req, res) {
     });
 
 
-}
+}*/
 
 function updateUser(req, res) {
 
@@ -777,12 +776,12 @@ function updateUser(req, res) {
         //"password": req.body.password,
         "role_id": req.body.role_id,
         "created": req.body.created,
-        "modified": req.body.modified
+        "modified": today
     };
 
 
     //save to db
-    connection.query('UPDATE users SET ? where id = ' + userId, quote, function (error, results, fields) {
+    connection.query('UPDATE users SET ? where id = ' + userId, user, function (error, results, fields) {
 
         if (error) {
             console.log("database error ocurred", error);

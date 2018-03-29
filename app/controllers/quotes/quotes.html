@@ -19,10 +19,29 @@
 </div>
 
 
+<div class="row page-header" ng-hide="error">
+    <div class="col-md-12">
+        <div class="form-group">
+            <button ng-show='checkUserRole("admin") ||  checkUserRole("editor")' ng-click="addQoute();"
+                    class="btn btn-success">Add Quote
+            </button>
+        </div>
+    </div>
+</div>
+
+
 <div class="row animate-repeat" ng-hide="error"
      ng-repeat="quote in quotes | filter:q as results track by quote.author">
 
-    <md-card class="col-md-12">
+    <md-card class="col-md-12" ng-hide="quote.edit">
+.
+        <md-card-actions layout="row" layout-align="end start">
+            <md-button ng-click="editQuote( quote )" ng-show='checkUserRole("admin") ||  checkUserRole("editor")'>Edit</md-button>
+            <md-button ng-show='checkUserRole("admin") ||  checkUserRole("editor")'
+                       ng-click="showConfirm( quote,$event)">Delete
+            </md-button>
+        </md-card-actions>
+
         <md-card-title>
             <md-card-title-text>
                 <span class="md-headline">{{quote.quote}}</span>
@@ -36,11 +55,60 @@
                 <div class="md-media-lg card-media"></div>
             </md-card-title-media>
         </md-card-title>
-        <md-card-actions layout="row" layout-align="end center">
-            <md-button ng-show='checkUserRole("admin") ||  checkUserRole("editor")'>Edit</md-button>
-            <md-button ng-show='checkUserRole("admin") ||  checkUserRole("editor")'>Delete</md-button>
-        </md-card-actions>
+
+        <md-card-title-media>
+            <div class="md-media-lg card-media"></div>
+        </md-card-title-media>
+
+
     </md-card>
+
+
+    <md-card class="col-md-12" ng-show="quote.edit">
+
+
+
+        <form ng-submit="formSubmit()" class="form ">
+            <div class="col-md-4">
+                <div class="form-group">
+
+                <textarea type="text" class="form-control"
+                          ng-model="quote.quote" placeholder="quote"
+                            required=""/>
+
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-control" ng-model="quote.author" placeholder="author"
+                           required=""/>
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-control" ng-model="quote.source" placeholder="source"/>
+                </div>
+
+                <div class="form-group">
+                    <input type="number" min="0"max="=2018" class="form-control" ng-model="quote.year" placeholder="year"/>
+                   <!-- <input type="date"   ng-model="quote.year" name="year"
+                           placeholder="yyyy" min="2013-01-01" max="2013-12-31" required />-->
+                </div>
+
+                <div class="form-group">
+                    <span class="text-danger">{{ error }}</span>
+                </div>
+
+                <md-card-actions layout="row" layout-align="end start">
+                    <md-button type="submit" ng-show='checkUserRole("admin") ||  checkUserRole("editor")' ng-click="update(quote,$event);">Save</md-button>
+                    <md-button ng-click="cancel(quote);" >Cancel</md-button>
+                </md-card-actions>
+
+            </div>
+            <div class="col-md-12" ng-show="message">
+                {{message}}
+            </div>
+
+        </form>
+
+    </md-card>
+
 
     <div class="col-md-12" ng-if="results.length === 0">
         <strong>No results found...</strong>
